@@ -5,8 +5,8 @@ import usersRouter from "./routes/users.route.js"
 import booksRouter from "./routes/books.route.js"
 import { notFound } from "./middlewares/notFound.js";
 
-
 const app = express();
+
 app.use(morgan('dev'));
 app.use(express.json());
 

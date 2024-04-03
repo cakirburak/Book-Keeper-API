@@ -1,6 +1,5 @@
 export const errorHandler = (res, satatusCode, message) => {
-  res.status(satatusCode);
-  res.json({
+  res.status(satatusCode).json({
     message: message,
-  });
+  });;
 }

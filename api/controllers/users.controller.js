@@ -15,7 +15,7 @@ export const getUser = async (req, res) => {
 
 export const createUser = async (req, res) => {
   const { user_id: userId } = req.params;
-  res.json({
+  res.status(200).json({
     message: `Create User : ${userId}`,
   });
 }

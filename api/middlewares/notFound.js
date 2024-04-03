@@ -1,7 +1,5 @@
-export const notFound = (req, res, next) => {
-  res.status(404);
-  const error = `Not Found - ${req.originalUrl}`;
-  res.json({
-    message: error
-  })
+export const notFound = (req, res) => {
+  res.status(404).json({
+    message: `Not Found - ${req.method} => ${req.originalUrl}`
+  });
 }
