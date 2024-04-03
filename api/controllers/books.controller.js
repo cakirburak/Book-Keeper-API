@@ -16,7 +16,7 @@ export const getBook = async (req, res) => {
   const { book_id: bookId } = req.params
 
   try {
-    const book = await Book.findByPk(bookId)
+    const book = await Book.findByPk(bookId);
     if (book)
       res.status(200).json(book);
     else

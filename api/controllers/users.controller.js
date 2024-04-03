@@ -1,4 +1,6 @@
+import { literal } from 'sequelize'
 import { User } from "../../db/models/user.model.js"
+import { Book } from "../../db/models/book.model.js";
 import { BorrowStats } from "../../db/models/borrowStats.model.js"
 import { validateUserName } from "../utils/validateName.js"
 
@@ -14,18 +16,36 @@ export const getUsers = async (req, res) => {
 }
 
 export const getUser = async (req, res) => {
-  const { user_id: userId } = req.params
+  const { user_id: userId } = req.params;
+  const books = {
+    "past": [],
+    "present": [],
+  }
 
-  const borrowStats = await BorrowStats.findAll({
-    attributes: ['userId', 'bookId', 'isReturned', 'score'],
-  });
-  console.log(borrowStats.every(borrow => borrow instanceof BorrowStats)); // true
-  console.log("All users_books:", JSON.stringify(borrowStats, null, 2));
+  try {
+    const borrowStats = await BorrowStats.findAll({
+      attributes: ['userId', 'bookId', 'isReturned', 'score'],
+      where: { userId: userId },
+    });
+
+    const processBorrow = async (borrow) => {
+      const book = await Book.findByPk(borrow.bookId);
+      if (borrow.isReturned) {
+        books["past"].push({ "name": book.name, "userScore": borrow.score });
+      } else {
+        books["present"].push({ "name": book.name, "userScore": borrow.score });
+      }
+    };
+
+    await Promise.all(borrowStats.map(processBorrow));
+  } catch (error) {
+    res.status(500).json({ "Internal Server Error": error.message });
+  }
 
   try {
     const user = await User.findByPk(userId);
     if(user)
-      res.status(200).json(user);
+      res.status(200).json({ ...user.dataValues, books });
     else
       res.status(404).json({"Not Found" : `user id not found : ${userId}`});
   } catch (error) {
@@ -61,10 +81,37 @@ export const createUser = async (req, res) => {
 
 export const borrowBook = async (req, res) => {
   const { user_id: userId, book_id: bookId } = req.params;
+  let user = null, book = null;
 
-  res.json({
-    message: `User : ${userId}, Borrow Book ${bookId}`,
-  });
+  try {
+    user = await User.findByPk(userId);
+    if (!user)
+      res.status(404).json({ "Not Found": `user id not found : ${userId}` });
+  } catch (error) {
+    res.status(500).json({ "Internal Server Error": error.message });
+  }
+
+  try {
+    book = await Book.findByPk(bookId);
+    if (!book)
+      res.status(404).json({ "Not Found": `book id not found : ${bookId}` });
+  } catch (error) {
+    res.status(500).json({ "Internal Server Error": error.message });
+  }
+
+  if (book.isAvailable) {
+    // book.isAvailable = false
+    book.update({ isAvailable : false });
+    const borrowStat = BorrowStats.build({
+      userId: user.id,
+      bookId: book.id,
+      isReturned: false,
+    });
+    await borrowStat.save();
+    res.status(204).json();
+  } else {
+    res.status(424).json({ "message" : `book ${book.id} is not available`})
+  }
 }
 
 export const returnBook = async (req, res) => {

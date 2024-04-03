@@ -14,6 +14,12 @@ export const Book = sequelize.define('Book', {
     field: 'book_name',
     allowNull: false
   },
+  isAvailable: {
+    type: DataTypes.BOOLEAN,
+    field: 'is_available',
+    allowNull: false,
+    defaultValue: true
+  }
 }, {
   // Model options are defined here
   tableName: 'books',
