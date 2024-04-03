@@ -1,9 +1,11 @@
 import app from './app.js'
 import dotenv from "dotenv";
 import { sequelizeInit, dropTablesOnExit } from "../db/sequelize.config.js"
+import { initDbRelations } from './utils/initDbRelations.js';
 
 // initialize postgres with provided tables and data
 sequelizeInit();
+initDbRelations();
 
 // listen exit signal to drop tables on exit
 process.on('exit', async (code) => {

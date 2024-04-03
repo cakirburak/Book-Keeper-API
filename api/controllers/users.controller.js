@@ -1,4 +1,5 @@
 import { User } from "../../db/models/user.model.js"
+import { BorrowStats } from "../../db/models/borrowStats.model.js"
 import { validateUserName } from "../utils/validateName.js"
 
 export const getUsers = async (req, res) => {
@@ -14,6 +15,12 @@ export const getUsers = async (req, res) => {
 
 export const getUser = async (req, res) => {
   const { user_id: userId } = req.params
+
+  const borrowStats = await BorrowStats.findAll({
+    attributes: ['userId', 'bookId', 'isReturned', 'score'],
+  });
+  console.log(borrowStats.every(borrow => borrow instanceof BorrowStats)); // true
+  console.log("All users_books:", JSON.stringify(borrowStats, null, 2));
 
   try {
     const user = await User.findByPk(userId);

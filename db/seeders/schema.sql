@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS books (
 	is_available BOOLEAN NOT NULL DEFAULT TRUE
 );
 
-CREATE TABLE IF NOT EXISTS users_books (
+CREATE TABLE IF NOT EXISTS borrow_stats (
+	borrow_id INT NOT NULL PRIMARY KEY,
 	user_id INT REFERENCES users, 
 	book_id INT REFERENCES books,
 	is_returned BOOLEAN,

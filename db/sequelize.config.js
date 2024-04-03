@@ -30,8 +30,6 @@ export const sequelizeInit = () => {
     .catch((err) => {
       console.error('Error executing SQL:', err);
     });
-  
-  return sequelize;
 }
 
 export const dropTablesOnExit = async (signal) => {
