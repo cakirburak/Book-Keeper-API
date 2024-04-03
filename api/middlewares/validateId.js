@@ -1,5 +1,4 @@
 import validator from "validator";
-import { errorHandler } from "./errorHandler.js";
 
 export const validateId = (req, res, next) => {
 

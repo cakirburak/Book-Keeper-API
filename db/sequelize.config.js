@@ -4,15 +4,15 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+export const sequelize = new Sequelize({
+  username: process.env.PG_USER,
+  password: process.env.PG_PWD,
+  database: process.env.PG_DB,
+  host: 'localhost',
+  dialect: 'postgres',
+});
+
 export const sequelizeInit = () => {
-  // Initialize Sequelize with PostgreSQL database configuration
-  const sequelize = new Sequelize({
-    username: process.env.PG_USER,
-    password: process.env.PG_PWD,
-    database: process.env.PG_DB,
-    host: 'localhost',
-    dialect: 'postgres',
-  });
 
   const schemaSQL = fs.readFileSync('db/seeders/schema.sql', 'utf8');
   const dataSQL = fs.readFileSync('db/seeders/data.sql', 'utf8');
@@ -34,7 +34,7 @@ export const sequelizeInit = () => {
   return sequelize;
 }
 
-export const dropTablesOnExit = async (signal, sequelize) => {
+export const dropTablesOnExit = async (signal) => {
   console.log(`Received ${signal}, shutting down...`);
 
   const dropSQL = fs.readFileSync('db/seeders/drop.sql', 'utf8');

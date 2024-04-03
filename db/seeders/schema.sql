@@ -1,18 +1,17 @@
 CREATE TABLE IF NOT EXISTS users (
-	user_id BIGINT NOT NULL PRIMARY KEY,
+	user_id INT NOT NULL PRIMARY KEY,
 	user_name VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS books (
-	book_id BIGINT NOT NULL PRIMARY KEY,
+	book_id INT NOT NULL PRIMARY KEY,
 	book_name VARCHAR(100) NOT NULL,
 	is_available BOOLEAN NOT NULL DEFAULT TRUE
 );
 
-
 CREATE TABLE IF NOT EXISTS users_books (
-	user_id BIGINT REFERENCES users, 
-	book_id BIGINT REFERENCES books,
+	user_id INT REFERENCES users, 
+	book_id INT REFERENCES books,
 	is_returned BOOLEAN,
 	book_score INT NOT NULL DEFAULT (-1)
 );
