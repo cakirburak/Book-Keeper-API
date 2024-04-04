@@ -1,8 +1,8 @@
-import { literal } from 'sequelize'
+import { randomInt } from 'crypto';
 import { User } from "../../db/models/user.model.js"
 import { Book } from "../../db/models/book.model.js";
 import { BorrowStats } from "../../db/models/borrowStats.model.js"
-import { validateUserName } from "../utils/validateName.js"
+import { validateUserName, validateUserScore } from "../utils/validateReqBody.js"
 
 export const getUsers = async (req, res) => {
   try {
@@ -101,23 +101,61 @@ export const borrowBook = async (req, res) => {
 
   if (book.isAvailable) {
     // book.isAvailable = false
-    book.update({ isAvailable : false });
-    const borrowStat = BorrowStats.build({
+    book.update({ isAvailable: false });
+    await BorrowStats.create({
+      id: randomInt(8,8000),
       userId: user.id,
       bookId: book.id,
       isReturned: false,
     });
-    await borrowStat.save();
-    res.status(204).json();
+    res.status(204).json({});
   } else {
-    res.status(424).json({ "message" : `book ${book.id} is not available`})
+    res.status(424).json({ "Failed" : `book ${book.id} is not available`})
   }
 }
 
 export const returnBook = async (req, res) => {
   const { user_id: userId, book_id: bookId } = req.params;
+  let user = null, book = null;
 
-  res.json({
-    message: `User : ${userId}, Returns Book ${bookId}`,
-  });
+  if (req.body.score) {
+    if (!validateUserScore(req.body.score)) {
+      res.status(400).json({ "Invalid user score": `${req.body.score}` });
+      return;
+    }
+  } else {
+    res.status(400).json({ "Error": "No user name provided in the body" });
+    return;
+  }
+
+  try {
+    user = await User.findByPk(userId);
+    if (!user)
+      res.status(404).json({ "Not Found": `user id not found : ${userId}` });
+  } catch (error) {
+    res.status(500).json({ "Internal Server Error": error.message });
+  }
+
+  try {
+    book = await Book.findByPk(bookId);
+    if (!book)
+      res.status(404).json({ "Not Found": `book id not found : ${bookId}` });
+  } catch (error) {
+    res.status(500).json({ "Internal Server Error": error.message });
+  }
+
+  try {
+    const borrowStat = await BorrowStats.findOne({
+      where: { userId: userId, bookId: bookId, isReturned: false },
+    });
+    console.log(borrowStat);
+    if (borrowStat) {
+      borrowStat.update({ isReturned: true, score: req.body.score });
+      res.status(204).json({});
+    } else {
+      res.status(424).json({ "Failed": `book ${book.id} has not borrowed by user ${user.id}` })
+    }
+  } catch (error) {
+    res.status(500).json({ "Internal Server Error": error.message });
+  }
 }

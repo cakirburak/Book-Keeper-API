@@ -10,3 +10,7 @@ export const validateBookName = (name) => {
   // check if name is not empty and contains letters a-zA-Z0-9 and white space
   return !validator.isEmpty(name) && validator.isAlphanumeric(name, "tr-TR", { ignore: (/\s/) });
 }
+
+export const validateUserScore = (score) => {
+  return validator.isInt(score.toString());
+}

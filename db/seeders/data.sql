@@ -17,6 +17,6 @@ insert into borrow_stats (borrow_id, user_id, book_id, is_returned, book_score) 
 insert into borrow_stats (borrow_id, user_id, book_id, is_returned, book_score) values (3, 2, 2, TRUE, 4);
 insert into borrow_stats (borrow_id, user_id, book_id, is_returned, book_score) values (4, 2, 3, TRUE, 7);
 insert into borrow_stats (borrow_id, user_id, book_id, is_returned, book_score) values (5, 3, 4, TRUE, 9);
-insert into borrow_stats (borrow_id, user_id, book_id, is_returned, book_score) values (6, 3, 5, FALSE, 3);
+insert into borrow_stats (borrow_id, user_id, book_id, is_returned, book_score) values (6, 3, 5, FALSE, -1);
 insert into borrow_stats (borrow_id, user_id, book_id, is_returned, book_score) values (7, 4, 2, TRUE, 2);
 insert into borrow_stats (borrow_id, user_id, book_id, is_returned, book_score) values (8, 4, 3, TRUE, 8);

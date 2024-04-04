@@ -1,5 +1,5 @@
 import { Book } from "../../db/models/book.model.js";
-import { validateBookName } from "../utils/validateName.js"
+import { validateBookName } from "../utils/validateReqBody.js"
 
 export const getBooks = async (req, res) => {
   try {

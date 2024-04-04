@@ -10,7 +10,6 @@ export const BorrowStats = sequelize.define('BorrowStats', {
     field: 'borrow_id',
     primaryKey: true,
     allowNull: false,
-    autoIncrement: true
   },
   userId: {
     type: DataTypes.INTEGER,
@@ -44,5 +43,4 @@ export const BorrowStats = sequelize.define('BorrowStats', {
   // Model options are defined here
   tableName: 'borrow_stats',
   timestamps: false,
-  initialAutoIncrement: 9
 });
